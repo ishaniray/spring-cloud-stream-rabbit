@@ -5,11 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Processor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.handler.annotation.SendTo;
 
-import com.baeldung.spring.cloud.stream.rabbit.messages.TextPlainMessageConverter;
 import com.baeldung.spring.cloud.stream.rabbit.model.LogMessage;
 
 @SpringBootApplication
@@ -17,11 +14,6 @@ import com.baeldung.spring.cloud.stream.rabbit.model.LogMessage;
 public class MyLoggerServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(MyLoggerServiceApplication.class, args);
-    }
-
-    @Bean
-    public MessageConverter providesTextPlainMessageConverter() {
-        return new TextPlainMessageConverter();
     }
 
     @StreamListener(Processor.INPUT)

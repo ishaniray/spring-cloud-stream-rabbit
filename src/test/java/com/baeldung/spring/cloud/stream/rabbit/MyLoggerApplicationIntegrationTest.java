@@ -12,7 +12,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.baeldung.spring.cloud.stream.rabbit.messages.ObjectToJsonConverter;
 import com.baeldung.spring.cloud.stream.rabbit.model.LogMessage;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = MyLoggerServiceApplication.class)
@@ -24,17 +26,25 @@ public class MyLoggerApplicationIntegrationTest {
 
     @Autowired
     private MessageCollector messageCollector;
+    
+    @Autowired
+    ObjectToJsonConverter converter;
 
     @Test
-    public void whenSendMessage_thenResponseShouldUpdateText() {
+    public void whenSendMessage_thenResponseShouldUpdateText() throws JsonProcessingException {
+    	
+    	LogMessage logMessage = new LogMessage("This is my message");
+    	
         pipe.input()
-            .send(MessageBuilder.withPayload(new LogMessage("This is my message"))
+            .send(MessageBuilder.withPayload(logMessage)
                 .build());
 
         Object payload = messageCollector.forChannel(pipe.output())
             .poll()
             .getPayload();
+        
+        logMessage.setMessage(String.format("[1]: %s", logMessage.getMessage()));
 
-        assertEquals("[1]: This is my message", payload.toString());
+        assertEquals(converter.convertToJson(logMessage), payload.toString());
     }
 }

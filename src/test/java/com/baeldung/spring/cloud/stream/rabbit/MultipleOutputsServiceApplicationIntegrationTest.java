@@ -47,6 +47,6 @@ public class MultipleOutputsServiceApplicationIntegrationTest {
         Object payload = messageCollector.forChannel(channel)
             .poll()
             .getPayload();
-        assertEquals(expectedValue, payload);
+        assertEquals(String.valueOf(expectedValue), payload);
     }
 }
